@@ -71,7 +71,17 @@ def interleaved_sum(n, odd_func, even_func):
     >>> check(HW_SOURCE_FILE, 'interleaved_sum', ['BitAnd', 'BitOr', 'BitXor']) # ban bitwise operators, don't worry about these if you don't know what they are
     True
     """
-    "*** YOUR CODE HERE ***"
+
+    def helper(k, is_odd):
+        if k == 0 or k > n:
+            return 0
+        else:
+            if is_odd:
+                return odd_func(k) + helper(k + 1, not is_odd)
+            else:
+                return even_func(k) + helper(k + 1, not is_odd)
+
+    return helper(1, True)
 
 
 def next_smaller_dollar(bill):
@@ -108,7 +118,22 @@ def count_dollars(total):
     >>> check(HW_SOURCE_FILE, 'count_dollars', ['While', 'For'])
     True
     """
-    "*** YOUR CODE HERE ***"
+
+    def nearest_smaller_doller(n):
+        if next_smaller_dollar(n):
+            return n
+        else:
+            return nearest_smaller_doller(n - 1)
+
+    def helper(n, m):
+        if n < 0 or not m:
+            return 0
+        elif n == 0:
+            return 1
+        else:
+            return helper(n - m, m) + helper(n, next_smaller_dollar(m))
+
+    return helper(total, nearest_smaller_doller(total))
 
 
 def next_larger_dollar(bill):
@@ -145,7 +170,16 @@ def count_dollars_upward(total):
     >>> check(HW_SOURCE_FILE, 'count_dollars_upward', ['While', 'For'])
     True
     """
-    "*** YOUR CODE HERE ***"
+
+    def helper(n, m):
+        if n < 0 or not m:
+            return 0
+        elif n == 0:
+            return 1
+        else:
+            return helper(n - m, m) + helper(n, next_larger_dollar(m))
+
+    return helper(total, 1)
 
 
 def print_move(origin, destination):
@@ -181,7 +215,22 @@ def move_stack(n, start, end):
     Move the top disk from rod 1 to rod 3
     """
     assert 1 <= start <= 3 and 1 <= end <= 3 and start != end, "Bad start/end"
-    "*** YOUR CODE HERE ***"
+    if n == 1:
+        print_move(start, end)
+        return
+    else:
+        # Copy from GPT
+        # Determine the auxiliary pole (the one that's not start or end)
+        auxiliary = 6 - start - end
+
+        # Step 1: Move n-1 disks from start to auxiliary
+        move_stack(n - 1, start, auxiliary)
+
+        # Step 2: Move the nth (largest) disk from start to end
+        print_move(start, end)
+
+        # Step 3: Move the n-1 disks from auxiliary to end
+        move_stack(n - 1, auxiliary, end)
 
 
 from operator import mul, sub
@@ -198,4 +247,6 @@ def make_anonymous_factorial():
     ...     ['Assign', 'AnnAssign', 'AugAssign', 'NamedExpr', 'FunctionDef', 'Recursion'])
     True
     """
-    return "YOUR_EXPRESSION_HERE"
+    return (lambda f: (lambda x: f(f, x)))(
+        lambda self, n: 1 if n == 0 else mul(n, self(self, sub(n, 1)))
+    )
