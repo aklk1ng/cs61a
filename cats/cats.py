@@ -184,7 +184,18 @@ def autocorrect(typed_word, word_list, diff_function, limit):
     'testing'
     """
     # BEGIN PROBLEM 5
-    "*** YOUR CODE HERE ***"
+    if typed_word in word_list:
+        return typed_word
+
+    diff = limit + 1
+    res = ""
+    for word in word_list:
+        cur = diff_function(typed_word, word, limit)
+        if cur <= limit and cur < diff:
+            res = word
+            diff = cur
+    return res and res or typed_word
+
     # END PROBLEM 5
 
 
