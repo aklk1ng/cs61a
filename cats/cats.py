@@ -1,6 +1,7 @@
 """Typing test implementation"""
 
 import random
+import sys
 from datetime import datetime
 
 from ucb import interact, main, trace
@@ -254,23 +255,26 @@ def minimum_mewtations(typed, source, limit):
     >>> minimum_mewtations("ckiteus", "kittens", big_limit) # ckiteus -> kiteus -> kitteus -> kittens
     3
     """
-    assert False, "Remove this line"
-    if ___________:  # Base cases should go here, you may add more base cases as needed.
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
+    if (
+        len(typed) == 0
+    ):  # Base cases should go here, you may add more base cases as needed.
+        return len(source)
+    if (
+        len(source) == 0
+    ):  # Base cases should go here, you may add more base cases as needed.
+        return len(typed)
     # Recursive cases should go below here
-    if ___________:  # Feel free to remove or add additional cases
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
-    else:
-        add = ...  # Fill in these lines
-        remove = ...
-        substitute = ...
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
+    if limit < 0:  # Feel free to remove or add additional cases
+        return float("inf")
+    if typed[0] == source[0]:
+        return minimum_mewtations(typed[1:], source[1:], limit)
+
+    add = 1 + minimum_mewtations(typed, source[1:], limit - 1)
+    remove = 1 + minimum_mewtations(typed[1:], source, limit - 1)
+    substitute = 1 + minimum_mewtations(typed[1:], source[1:], limit - 1)
+    # BEGIN
+    return min(add, remove, substitute)
+    # END
 
 
 # Ignore the line below
@@ -315,7 +319,17 @@ def report_progress(typed, source, user_id, upload):
     0.2
     """
     # BEGIN PROBLEM 8
-    "*** YOUR CODE HERE ***"
+    cnt = 0
+    n = len(typed)
+    m = len(source)
+    for i in range(min(n, m)):
+        if typed[i] == source[i]:
+            cnt += 1
+        else:
+            break
+    progress = cnt / m
+    upload({"id": user_id, "progress": progress})
+    return progress
     # END PROBLEM 8
 
 
