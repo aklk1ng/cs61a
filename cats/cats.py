@@ -221,8 +221,19 @@ def furry_fixes(typed, source, limit):
     >>> furry_fixes("rose", "hello", big_limit)   # Substitute: r->h, o->e, s->l, e->l, length difference of 1.
     5
     """
+
     # BEGIN PROBLEM 6
-    assert False, "Remove this line"
+    def inner(typed, source, step):
+        if step > limit:
+            return limit + 1
+        if len(typed) == 0 and len(source) == 0:
+            return 0
+        elif len(typed) == 0 or len(source) == 0:
+            return abs(len(typed) - len(source))
+        cur = int(typed[0] != source[0])
+        return cur + inner(typed[1:], source[1:], step + cur)
+
+    return inner(typed, source, 0)
     # END PROBLEM 6
 
 
