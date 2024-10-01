@@ -1,7 +1,6 @@
 """Typing test implementation"""
 
 import random
-import sys
 from datetime import datetime
 
 from ucb import interact, main, trace
@@ -154,7 +153,14 @@ def memo_diff(diff_function):
 
     def memoized(typed, source, limit):
         # BEGIN PROBLEM EC
-        "*** YOUR CODE HERE ***"
+        pair = (typed, source)
+        if pair in cache and limit <= cache[pair][1]:
+            return cache[pair][0]
+
+        res = diff_function(typed, source, limit)
+        cache[pair] = (res, limit)
+        return res
+
         # END PROBLEM EC
 
     return memoized
@@ -165,6 +171,7 @@ def memo_diff(diff_function):
 ###########
 
 
+@memo
 def autocorrect(typed_word, word_list, diff_function, limit):
     """Returns the element of WORD_LIST that has the smallest difference
     from TYPED_WORD based on DIFF_FUNCTION. If multiple words are tied for the smallest difference,
@@ -238,6 +245,7 @@ def furry_fixes(typed, source, limit):
     # END PROBLEM 6
 
 
+@memo_diff
 def minimum_mewtations(typed, source, limit):
     """A diff function for autocorrect that computes the edit distance from TYPED to SOURCE.
     This function takes in a string TYPED, a string SOURCE, and a number LIMIT.
@@ -255,26 +263,20 @@ def minimum_mewtations(typed, source, limit):
     >>> minimum_mewtations("ckiteus", "kittens", big_limit) # ckiteus -> kiteus -> kitteus -> kittens
     3
     """
-    if (
-        len(typed) == 0
-    ):  # Base cases should go here, you may add more base cases as needed.
-        return len(source)
-    if (
-        len(source) == 0
-    ):  # Base cases should go here, you may add more base cases as needed.
-        return len(typed)
-    # Recursive cases should go below here
-    if limit < 0:  # Feel free to remove or add additional cases
-        return float("inf")
+    if len(typed) == 0 or len(source) == 0:
+        return abs(len(typed) - len(source))
+    if typed == source:
+        return 0
+    if limit < 0:
+        return 1e9
     if typed[0] == source[0]:
         return minimum_mewtations(typed[1:], source[1:], limit)
 
     add = 1 + minimum_mewtations(typed, source[1:], limit - 1)
     remove = 1 + minimum_mewtations(typed[1:], source, limit - 1)
     substitute = 1 + minimum_mewtations(typed[1:], source[1:], limit - 1)
-    # BEGIN
+
     return min(add, remove, substitute)
-    # END
 
 
 # Ignore the line below
@@ -480,4 +482,3 @@ def run(*args):
     args = parser.parse_args()
     if args.t:
         run_typing_test(args.topic)
-
